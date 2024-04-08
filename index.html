@@ -19,7 +19,7 @@ and is wrapped around the whole page content, except for the footer in this exam
 <!-- Header -->
 <header class="w3-container w3-center w3-padding-32"> 
   <h1><b>You've been Quished!</b></h1>
-  <p>You and <span id="visits" class="w3-tag" >7</span> other people have been "quished".</p>
+  <p>You and <span id="visits" class="w3-tag" >7</span> other people have been "quished" as of April 9, 2024.</p>
 </header>
 
 <!-- Grid -->
@@ -138,7 +138,7 @@ and is wrapped around the whole page content, except for the footer in this exam
 
 
 <script>
-   document.addEventListener('DOMContentLoaded', () => {
+ document.addEventListener('DOMContentLoaded', () => {
             // Fetch data from the API
             fetch('https://count.cab/get/PbJOeBZPVu')
                 .then(response => {
@@ -151,21 +151,23 @@ and is wrapped around the whole page content, except for the footer in this exam
                 })
                 .then(data => {
                     // Update the text content of the HTML element with id 'visit'
-                    const visitElement = document.getElementById('visit');
+                    const visitElement = document.getElementById('visits');
                     visitElement.textContent = data.count;
 
-                    if (sessionStorage.getItem('visited') == true) {
-                        console.log("You've visited the site before!")
-                    } else {
-                        fetch('https://count.cab/hit/PbJOeBZPVu');
-                        sessionStorage.setItem('visited', true);
-                    }
-                    
+                    // Check if the user has visited the page before
+                      if (localStorage.getItem('visitedBefore')) {
+                          console.log("You've visited the site before!")
+                      } else {
+                          // If it's the first visit, set the flag in localStorage
+                          fetch('https://count.cab/hit/PbJOeBZPVu');
+                          localStorage.setItem('visitedBefore', true);
+                           console.log("Welcome, new visitor!")
+                      }
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
-                    const visitElement = document.getElementById('visit');
-                    visitElement.textContent = 'Failed to fetch visit count';
+                    const visitElement = document.getElementById('visits');
+                    visitElement.textContent = 'N/A';
                 });
         });
 </script>
