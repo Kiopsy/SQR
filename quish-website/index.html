@@ -1,175 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Legitamate Site</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
-<style>
-body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
-</style>
+    <title>Events & Endless Horse</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <style>
+        body, h1, h2, h3, h4, h5 {font-family: "Raleway", sans-serif;}
+        .w3-content {
+            max-width: 1400px;
+            margin: auto;
+        }
+        .header {
+            text-align: center;
+            padding: 32px;
+        }
+        .blurb {
+            margin: 15px;
+            text-align: center;
+            font-style: italic;
+        }
+        /* Styles for the horse animation */
+        pre { margin: 0; }
+        .centered { width: 380px; margin: 20px auto; }
+        h1 { text-align: center; }
+    </style>
 </head>
 <body class="w3-light-grey">
+    <div class="w3-content">
+        <!-- Header -->
+        <header class="header"> 
+            <h1><b>You've been Quished!</b></h1>
+            <p>You and <span id="visits" class="w3-tag">7</span> other people have been "quished" as of April 9, 2024.</p>
+        </header>
 
-<!-- w3-content defines a container for fixed size centered content, 
-and is wrapped around the whole page content, except for the footer in this example -->
-<div class="w3-content" style="max-width:1400px">
-
-<!-- Header -->
-<header class="w3-container w3-center w3-padding-32"> 
-  <h1><b>You've been Quished!</b></h1>
-  <p>You and <span id="visits" class="w3-tag" >7</span> other people have been "quished" as of April 9, 2024.</p>
-</header>
-
-<!-- Grid -->
-<div class="w3-row">
-
-<!-- Blog entries -->
-<div class="w3-col l8 s12">
-  <!-- Blog entry -->
-  <div class="w3-card-4 w3-margin w3-white">
-    <img src="https://images.unsplash.com/photo-1537872384762-e785271d14f8?q=80&w=3264&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Nature" style="width:100%">
-    <div class="w3-container">
-      <h3><b>Learn about Quishing</b></h3>
-      <h5>What is Quishing, <span class="w3-opacity">by Checkpoint</span></h5>
-    </div>
-
-    <div class="w3-container">
-      <p>Quishing attacks work like traditional phishing attacks. Often, a phishing attack will involve an email or text message containing a malicious link. When the recipient clicks on a link, they are directed to a phishing site that attempts to steal sensitive information — such as login credentials — or install malware on their computer.</p>
-      <div class="w3-row">
-        <div class="w3-col m8 s12">
-          <p><a href="https://www.checkpoint.com/cyber-hub/threat-prevention/what-is-phishing/what-is-quishing-qr-phishing/" class="w3-button w3-padding-large w3-white w3-border"><b>READ MORE »</b></a></p>
+        <!-- Blurb about Quishing -->
+        <div class="blurb">
+            <p>“Quishing”, otherwise known as QR phishing, is a type of cyber attack that tricks users into scanning QR codes that may lead to malicious websites. This site is not malicious. We are students conducting research on QR code security and social engineering. We apologize for the misdirection and for any inconvenience it may have caused.</p>
         </div>
-      </div>
-    </div>
-  </div>
-  <hr>
 
-  <!-- Blog entry -->
-  <div class="w3-card-4 w3-margin w3-white">
-  <img src="https://plus.unsplash.com/premium_photo-1676618539992-21c7d3b6df0f?q=80&w=3264&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Norway" style="width:100%">
-    <div class="w3-container">
-      <h3><b>How to prevent Quising</b></h3>
-      <h5>Quishing on the rise: How to prevent QR code phishing, <span class="w3-opacity">by Alisa Irei</span></h5>
-    </div>
-
-    <div class="w3-container">
-      <p>Cybercriminals are using email-based quishing attacks to target users, according to threat researchers. At least one quishing campaign appears to be large-scale, long-running and dynamic, based on attack cadence and variations in the lures and domains the messages use.</p>
-      <div class="w3-row">
-        <div class="w3-col m8 s12">
-          <p><a href="https://www.techtarget.com/searchsecurity/feature/Quishing-on-the-rise-How-to-prevent-QR-code-phishing" class="w3-button w3-padding-large w3-white w3-border"><b>READ MORE »</b></a></p>
+        <!-- Endless Horse -->
+        <div id="horse" class="centered">
+<pre>
+   ,
+ _,,)\.~,,._
+ (()`  ``)\))),,_
+ |     \ ''((\)))),,_          ____
+ |6`   |   ''((\())) "-.____.-"    `-.-,
+ |    .'\    ''))))'                  \)))
+ |   |   `.     ''                     ((((
+ \, _)     \/                          |))))
+   `'        |                          (((((
+             \                  |       ))))))
+             `|    |           ,\     /((((((
+               |   / `-.______.<  \   |  )))))
+               |   |  /         `. \  \  ((((
+               |  / \ |           `.\  | (((
+               \  | | |             )| |  ))
+               | | | |             || |  '
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || | 
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |   
+</pre>
         </div>
-      </div>
     </div>
-  </div>
-<!-- END BLOG ENTRIES -->
-</div>
 
-<!-- Introduction menu -->
-<div class="w3-col l4">
-  <!-- About Card -->
-  <div class="w3-card w3-margin w3-margin-top">
-  <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" style="width:100%">
-    <div class="w3-container w3-white">
-      <h4><b>About Us</b></h4>
-      <p>We are current students enrolled in Harvard's COMPSCI 263: Systems Secuirty class. For our final project, we are running experiments to understand the ease at which quishing attacks can be proliferated.</p>
-    </div>
-  </div><hr>
-  
-  <!-- Posts -->
-  <div class="w3-card w3-margin">
-    <div class="w3-container w3-padding">
-      <h4>Popular Posts</h4>
-    </div>
-    <ul class="w3-ul w3-hoverable w3-white">
-      <li class="w3-padding-16">
-        <img src="https://www.w3schools.com/w3images/workshop.jpg" alt="Image" class="w3-left w3-margin-right" style="width:50px">
-        <span class="w3-large">Lorem</span><br>
-        <span>Sed mattis nunc</span>
-      </li>
-      <li class="w3-padding-16">
-        <img src="https://www.w3schools.com/w3images/gondol.jpg" alt="Image" class="w3-left w3-margin-right" style="width:50px">
-        <span class="w3-large">Ipsum</span><br>
-        <span>Praes tinci sed</span>
-      </li> 
-      <li class="w3-padding-16">
-        <img src="https://www.w3schools.com/w3images/skies.jpg" alt="Image" class="w3-left w3-margin-right" style="width:50px">
-        <span class="w3-large">Dorum</span><br>
-        <span>Ultricies congue</span>
-      </li>   
-      <li class="w3-padding-16 w3-hide-medium w3-hide-small">
-        <img src="https://www.w3schools.com/w3images/rock.jpg" alt="Image" class="w3-left w3-margin-right" style="width:50px">
-        <span class="w3-large">Mingsum</span><br>
-        <span>Lorem ipsum dipsum</span>
-      </li>  
-    </ul>
-  </div>
-  <hr> 
- 
-  <!-- Labels / tags -->
-  <div class="w3-card w3-margin">
-    <div class="w3-container w3-padding">
-      <h4>Tags</h4>
-    </div>
-    <div class="w3-container w3-white">
-    <p><span class="w3-tag w3-black w3-margin-bottom">Travel</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">New York</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">London</span>
-      <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">IKEA</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">NORWAY</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">DIY</span>
-      <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Ideas</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Baby</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Family</span>
-      <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">News</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Clothing</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Shopping</span>
-      <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Sports</span> <span class="w3-tag w3-light-grey w3-small w3-margin-bottom">Games</span>
-    </p>
-    </div>
-  </div>
-  
-<!-- END Introduction Menu -->
-</div>
-
-<!-- END GRID -->
-</div><br>
-
-<!-- END w3-content -->
-</div>
-
-<!-- Footer -->
-<footer class="w3-container w3-dark-grey w3-padding-32 w3-margin-top">
-  <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
-</footer>
-
-
-<script>
- document.addEventListener('DOMContentLoaded', () => {
-            // Fetch data from the API
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
             fetch('https://count.cab/get/PbJOeBZPVu')
                 .then(response => {
-                    // Check if the response is successful (status 200)
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
-                    // Parse the JSON response
                     return response.json();
                 })
                 .then(data => {
-                    // Update the text content of the HTML element with id 'visit'
                     const visitElement = document.getElementById('visits');
                     visitElement.textContent = data.count;
-
-                    // Check if the user has visited the page before
-                      if (localStorage.getItem('visitedBefore')) {
-                          console.log("You've visited the site before!")
-                      } else {
-                          // If it's the first visit, set the flag in localStorage
-                          fetch('https://count.cab/hit/PbJOeBZPVu');
-                          localStorage.setItem('visitedBefore', true);
-                           console.log("Welcome, new visitor!")
-                      }
+                    if (!localStorage.getItem('visitedBefore')) {
+                        fetch('https://count.cab/hit/PbJOeBZPVu');
+                        localStorage.setItem('visitedBefore', true);
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
-                    const visitElement = document.getElementById('visits');
-                    visitElement.textContent = 'N/A';
+                    document.getElementById('visits').textContent = 'N/A';
                 });
         });
-</script>
+
+        document.addEventListener( 'scroll', function () {
+          var pre = document.querySelector( 'pre' );
+          pre.innerText = pre.innerText + '	       | | | |             || |  \n'
+        });
+    </script>
 </body>
 </html>
