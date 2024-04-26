@@ -1,11 +1,11 @@
-from typing import Any, Tuple, Union
+from typing import Any, Tuple, Union, Dict, List
 from ecdsa import SigningKey, VerifyingKey, NIST192p, BadSignatureError
 import base64
 
 class CertificateAuthority():
     def __init__(self) -> None:
         # public key str -> [name of signer (e.g. "Harvard"), dict{website (e.g. "my.harvard.edu") -> its signed_url}]
-        self.log : dict[str, list[str, dict[str, Any]]] = {}
+        self.log : Dict[str, Tuple[str, Dict[str, Any]]] = {}
         self.users = set()
 
     # Register a key for a creator of SQR codes 
@@ -22,25 +22,24 @@ class CertificateAuthority():
         self.users.add(user)
         return True
     
-    def verify_signed_url(self, public_key_str: str, byte_url: bytes, signed_url: bytes) -> bool:
+    def verify_signed_url(self, public_key_str: str, url: str, signed_url: bytes) -> bool:
         # vk = VerifyingKey.from_string(public_key, curve=NIST192p)
         decoded_public_key_bytes = base64.b64decode(public_key_str)
         vk = VerifyingKey.from_string(decoded_public_key_bytes)
 
         try:
-            vk.verify(byte_url, signed_url)
-            print(f"Site registered: {byte_url.decode()}")
+            vk.verify(url, signed_url)
+            print(f"Site registered: {url}")
             return True
         except BadSignatureError:
-            print(f"Bad signed_url detected by certificate authority for url {byte_url.decode()}")
+            print(f"Bad signed_url detected by certificate authority for url {url}")
         
         return False
 
     # Take a signed message from an SQR code creator containing a url 
     # we want to insert. If the signed_url isn't valid, ignore the message.
-    def register_url(self, public_key_str: str, byte_url: bytes, signed_url: bytes) -> None:
-       
-        if self.verify_signed_url(public_key_str, byte_url, signed_url) == False:
+    def register_url(self, public_key_str: str, url: str, signed_url: bytes) -> None:
+        if self.verify_signed_url(public_key_str, url, signed_url) == False:
             return None
 
         value = self.log.get(public_key_str)
@@ -48,23 +47,23 @@ class CertificateAuthority():
             return None
         _, url_to_signed_url = value
         
-        if byte_url in url_to_signed_url:
+        if url in url_to_signed_url:
             print("signed_url already exists for this url")
             return None
     
-        url_to_signed_url[byte_url] = signed_url 
+        url_to_signed_url[url] = signed_url 
     
     # Take a signed url contained in an SQR code and return its signed_url and the
     # identity of the signer.
-    # If the URL wasn't previously signed by this public key, returnsjey, returns    Union[Tuple[nion[Tup],str, ]str], None]one.
-    def get_signed_url(self, public_key_str: str, byte_url: bytes) -> tuple[str, bytes] | None:
+    # If the URL wasn't previously signed by this public key, returns None.
+    def get_signed_url(self, public_key_str: str, url: str) -> Tuple[str, bytes] | None:
         value = self.log.get(public_key_str)
         if value is None:
             return None
 
         identity, url_to_signed_url = value
 
-        signed_url = url_to_signed_url.get(byte_url)
+        signed_url = url_to_signed_url.get(url)
         if signed_url is None:
             return None
         
