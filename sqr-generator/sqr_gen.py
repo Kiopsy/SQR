@@ -1,32 +1,36 @@
 from typing import Sequence, Any
 from qrcodegen import QrCode
-from ecdsa import SigningKey
+from ecdsa import SigningKey, VerifyingKey
 from certificate_authority import CertificateAuthority
+import base64
 
 class SQRCode(QrCode):
     def __init__(self, 
                  version: int, 
                  errcorlvl: QrCode.Ecc, 
                  datacodewords: bytes | Sequence[int], 
-                 msk: int,
-                 ca: CertificateAuthority,
-                 private_key: SigningKey | None) -> None:
-
+                 msk: int) -> None:
         
         super().__init__(version, errcorlvl, datacodewords, msk)
 
-    def generate_signature(self, message: bytes):
-        return self.private_key.sign(message)
+    @staticmethod
+    def generate_signature(private_key_str: str, message: bytes) -> bytes:
+        decoded_private_key_bytes = base64.b64decode(private_key_str)
+        sk = SigningKey.from_string(decoded_private_key_bytes)
+        return sk.sign(message)
     
-    def generate_sqr_code(self, user: str, url: str) -> QrCode:
-        # encrypt shortened_url with private key to get signature
-        signed_url = self.generate_signature(url)
+    @staticmethod
+    def generate_sqr_code(public_key_str: str, private_key_str: str, url: str, certificate_authority: CertificateAuthority) -> QrCode:
 
-        # add new (url,signed_url) pair to user's list of pairs
-        ca.register_url(self.public_key, url, signed_url)
+        # encrypt shortened_url with private key to get signed_url
+        byte_url: bytes = url.encode('utf-8')
+        signed_url: bytes = SQRCode.generate_signature(private_key_str, byte_url)
+
+        # add new (url, signed_url) pair to Certificate Authority
+        certificate_authority.register_url(public_key_str, byte_url, signed_url)
 
         # encode pubkey and url into SQR code
         concatenator = "||"
-        payload = url + concatenator + self.public_key.to_string()
+        payload = url + concatenator + public_key_str
 
         return QrCode.encode_text(payload, QrCode.Ecc.MEDIUM)
