@@ -38,6 +38,9 @@ def main():
 	
     sqr_code = SQRCode.generate_sqr_code(public_key_str, private_key_str, raw_url, certificate_authority)
 
+    SQRCode.print_sqr(sqr_code)
+
+
 # Run the main program
 if __name__ == "__main__":
 	main()

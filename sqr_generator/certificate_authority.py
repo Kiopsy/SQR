@@ -28,7 +28,7 @@ class CertificateAuthority():
         vk = VerifyingKey.from_string(decoded_public_key_bytes)
 
         try:
-            vk.verify(url, signed_url)
+            vk.verify(bytes(url, "ascii"), signed_url)
             print(f"Site registered: {url}")
             return True
         except BadSignatureError:

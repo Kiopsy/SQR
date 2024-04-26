@@ -27,10 +27,20 @@ class SQRCode(QrCode):
         signed_url: bytes = SQRCode.generate_signature(private_key_str, byte_url)
 
         # add new (url, signed_url) pair to Certificate Authority
-        certificate_authority.register_url(public_key_str, byte_url, signed_url)
+        certificate_authority.register_url(public_key_str, url, signed_url)
 
         # encode pubkey and url into SQR code
         concatenator = "||"
         payload = url + concatenator + public_key_str
 
         return QrCode.encode_text(payload, QrCode.Ecc.MEDIUM)
+
+    @staticmethod
+    def print_sqr(qrcode: QrCode) -> None:
+        """Prints the given QrCode object to the console."""
+        border = 4
+        for y in range(-border, qrcode.get_size() + border):
+            for x in range(-border, qrcode.get_size() + border):
+                print("\u2588 "[1 if qrcode.get_module(x,y) else 0] * 2, end="")
+            print()
+        print()
