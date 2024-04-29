@@ -2,8 +2,12 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
+from .sqr.certificate_authority import CertificateAuthority
+
+
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
+certificate_authority = CertificateAuthority()
 
 def create_app():
     app = Flask(__name__)
@@ -16,7 +20,6 @@ def create_app():
     from . import models
     with app.app_context():
         db.create_all()
-
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'

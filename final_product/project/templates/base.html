@@ -5,7 +5,21 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Flask Auth Example</title>
+    <title>SQR</title>
+    <style>
+        /* Apply default styling to the specific link */
+        a.default-link {
+            color: initial; /* Reset the color */
+            text-decoration: underline; /* Add the default underline */
+            cursor: pointer; /* Add the default cursor */
+        }
+        
+        #default-image {
+            width: 300px;
+            height: 300px;
+            background-color: gray;
+        }
+    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
 </head>
 
@@ -25,6 +39,9 @@
                                 Profile
                             </a>
                             {% endif %}
+                            <a href="{{ url_for('main.scan') }}" class="navbar-item">
+                                Scan
+                            </a>
                             {% if not current_user.is_authenticated %}
                             <a href="{{ url_for('auth.login') }}" class="navbar-item">
                                 Login

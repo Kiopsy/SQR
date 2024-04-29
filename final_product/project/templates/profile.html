@@ -5,4 +5,76 @@
   Welcome, {{ name }}!
 </h1>
 
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Create SQR</h3>
+    <div class="box">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="notification is-danger">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+        {% endwith %}
+        <form id="image-form">
+            <div class="field">
+                <div class="control">
+                    <label class="label">URL</label>
+                    <input id="url-input" class="input is-large" type="text" name="url" placeholder="https://google.com" autofocus="" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="label">Signature</label>
+                    <input id="signature-input" class="input is-large" type="text" name="signature"  required>
+                    <a class="default-link" href="https://replit.com/@EmekaEzike1/Signing" target="_blank" rel="noopener noreferrer" style="color:blue">How do I sign?</a>
+                </div>
+            </div>
+
+            <button class="button is-block is-success is-large is-fullwidth">Create</button>
+        </form>
+
+        <div id="image-container" class="is-centered">
+            <div id="default-image"></div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+const form = document.getElementById('image-form');
+const imageContainer = document.getElementById('image-container');
+
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const url = document.getElementById('url-input').value;
+    const signature = document.getElementById('signature-input').value;
+
+    try {
+        const response = await fetch('/create_sqr_code', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url, signature })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            const imageElement = document.createElement('img');
+            imageElement.src = `data:image/png;base64,${data.image}`;
+            imageContainer.innerHTML = '';
+            imageContainer.appendChild(imageElement);
+        } else {
+            imageContainer.innerHTML = `<p class="has-text-danger">${data.error}</p>`;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+</script>
+
 {% endblock %}

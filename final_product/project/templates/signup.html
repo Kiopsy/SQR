@@ -14,19 +14,23 @@
         <form method="POST" action="/signup">
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="email" name="email" placeholder="Email" autofocus="">
+                    <label class="label">Public Key</label>
+                    <input class="input is-large" type="text" name="public_key" autofocus="" required>
+                    <a class="default-link" href="https://replit.com/@EmekaEzike1/Key-Generation" target="_blank" rel="noopener noreferrer" style="color:blue">I don't have a key</a>
                 </div>
             </div>
 
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="text" name="name" placeholder="Name" autofocus="">
+                    <label class="label">Name</label>
+                    <input class="input is-large" type="text" name="name" autofocus="" required>
                 </div>
             </div>
 
             <div class="field">
                 <div class="control">
-                    <input class="input is-large" type="password" name="password" placeholder="Password">
+                    <label class="label">Password</label>
+                    <input class="input is-large" type="password" name="password" required>
                 </div>
             </div>
 

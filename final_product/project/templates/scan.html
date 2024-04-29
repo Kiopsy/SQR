@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3 class="title">Scanner</h3>
+<div class="box">
+<video id="camera-stream" width="640" height="480" autoplay></video>
+</div>
+
+<script>
+    // Access the camera and stream it to the video element
+    // claude3: make a website that accesses the camera and continually sends image data to flask
+    // https://stackoverflow.com/a/59998983
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+            const video = document.getElementById('camera-stream');
+            video.srcObject = stream;
+
+            // Capture frames and send to Flask server
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            setInterval(function() {
+                canvas.width = video.width;
+                canvas.height = video.height;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = canvas.toDataURL('image/jpeg');
+
+                // Send image data to Flask server
+                fetch('/receive-image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ image_data: imageData })
+                })
+                .then(response => console.log('Image sent to server'))
+                .catch(error => console.error('Error sending image:', error));
+            }, 33); // Capture frames at roughly 30 FPS (1000ms / 30 = 33ms)
+        })
+        .catch(function(error) {
+            console.error('Error accessing camera:', error);
+        });
+</script>
+{% endblock %}
