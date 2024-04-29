@@ -1,12 +1,12 @@
 from typing import Sequence, Any
 from qrcodegen import QrCode
-from ecdsa import SigningKey, VerifyingKey
-from certificate_authority import CertificateAuthority
-import base64
 from pyzbar.pyzbar import decode
 from PIL import Image
 
 class SQRCode(QrCode):
+
+    concatenator = "||"
+
     def __init__(self, 
                  version: int, 
                  errcorlvl: QrCode.Ecc, 
@@ -15,30 +15,16 @@ class SQRCode(QrCode):
         
         super().__init__(version, errcorlvl, datacodewords, msk)
 
-    @staticmethod
-    def generate_signature(private_key_str: str, message: bytes) -> bytes:
-        decoded_private_key_bytes = base64.b64decode(private_key_str)
-        sk = SigningKey.from_string(decoded_private_key_bytes)
-        return sk.sign(message)
     
     @staticmethod
-    def generate_sqr_code(public_key_str: str, private_key_str: str, url: str, certificate_authority: CertificateAuthority) -> QrCode:
+    def generate_sqr_code(public_key_str: str, url: str) -> QrCode:
+        """Encode pubkey and url into SQR code"""
 
-        # encrypt shortened_url with private key to get signed_url
-        byte_url: bytes = url.encode('utf-8')
-        signed_url: bytes = SQRCode.generate_signature(private_key_str, byte_url)
-
-        # add new (url, signed_url) pair to Certificate Authority
-        certificate_authority.register_url(public_key_str, url, signed_url)
-
-        # encode pubkey and url into SQR code
-        concatenator = "||"
-        payload = url + concatenator + public_key_str
-
+        payload = url + SQRCode.concatenator + public_key_str
         return QrCode.encode_text(payload, QrCode.Ecc.MEDIUM)
     
     @staticmethod
-    def decode_sqr_code(image_path: str, certificate_authority: CertificateAuthority) -> str | None:
+    def decode_sqr_code(image_path: str) -> tuple[str, str] | None:
         # open the image and use pyzbar to decode
         img = Image.open(image_path)
         decoded_objects = decode(img)
@@ -48,20 +34,14 @@ class SQRCode(QrCode):
             for obj in decoded_objects:
                 # a decoded SQR should be: 'url || public_key_str'
                 try: 
-                    url, public_key_str = obj.data.decode('utf-8').split('||')
+                    url, public_key_str = obj.data.decode('utf-8').split(SQRCode.concatenator)
+                    return url, public_key_str
                 except:
                     print("Invalid format. Not an SQR code.")
                     return None
-
-                # check the url signature with the CA
-                signed_url = certificate_authority.get_signed_url(public_key_str, url)
-                if certificate_authority.verify_signed_url(public_key_str, url, signed_url):
-                    return url
-                else:
-                    print("Invalid SQR is not secure.")
-                    return None
         else:
             print("No QR code found.")
+            return None
 
     @staticmethod
     def print_sqr(qrcode: QrCode) -> None:
@@ -74,7 +54,7 @@ class SQRCode(QrCode):
         print()
 
     @staticmethod
-    def save_sqr_as_image(qrcode: QrCode, file_path: str) -> None:
+    def save_sqr_as_image(qrcode: QrCode, file_path: Any) -> None:
         """Saves the given QrCode object as an image file."""
         border = 1
         scale = 10  # This scale factor will determine the size of each module in the QR code

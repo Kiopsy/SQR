@@ -1,12 +1,12 @@
-from typing import Any, Tuple, Union, Dict, List
-from ecdsa import SigningKey, VerifyingKey, NIST192p, BadSignatureError
-import base64
+from typing import Any, Tuple, Dict
+from ecdsa import VerifyingKey, BadSignatureError
+from base64 import b64decode
 import pickle
 import os
 
 class CertificateAuthority():
     def __init__(self) -> None:
-        # public key str -> [name of signer (e.g. "Harvard"), dict{website (e.g. "my.harvard.edu") -> its signed_url}]
+        # public key str -> [username of signer (e.g. "Harvard"), dict{website (e.g. "my.harvard.edu") -> its signed_url}]
         if not os.path.exists("log.pickle"):
             self.log : Dict[str, Tuple[str, Dict[str, Any]]] = {}
             self.save_log()
@@ -20,8 +20,8 @@ class CertificateAuthority():
             pickle.dump(self.log, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     # Register a key for a creator of SQR codes 
-    def register_user(self, public_key_str: str, user: str) -> bool:
-        if public_key_str in self.log:
+    def register_user(self, public_key: str, user: str) -> bool:
+        if public_key in self.log:
             print("Error: this public key already exists in the logs")
             return False
         
@@ -29,55 +29,55 @@ class CertificateAuthority():
             print("Error: this user already exists in the logs")
             return False
             
-        self.log[public_key_str] = (user, {})
+        self.log[public_key] = (user, {})
         self.users.add(user)
         self.save_log()
         return True
     
-    def verify_signed_url(self, public_key_str: str, url: str, signed_url: bytes) -> bool:
-        # vk = VerifyingKey.from_string(public_key, curve=NIST192p)
-        decoded_public_key_bytes = base64.b64decode(public_key_str)
-        vk = VerifyingKey.from_string(decoded_public_key_bytes)
+    def verify_signature(self, public_key: str, url: str, signature: bytes) -> bool:
+
+        vk = VerifyingKey.from_string(b64decode(public_key))
 
         try:
-            vk.verify(bytes(url, "ascii"), signed_url)
+            vk.verify(bytes(url, "ascii"), signature)
             print(f"Site registered: {url}")
             return True
         except BadSignatureError:
-            print(f"Bad signed_url detected by certificate authority for url {url}")
+            print(f"Bad signature detected by certificate authority for url {url}")
         
         return False
 
     # Take a signed message from an SQR code creator containing a url 
     # we want to insert. If the signed_url isn't valid, ignore the message.
-    def register_url(self, public_key_str: str, url: str, signed_url: bytes) -> None:
-        if self.verify_signed_url(public_key_str, url, signed_url) == False:
-            return None
+    def register_url(self, public_key: str, url: str, signed_url: bytes) -> bool:
+        if self.verify_signature(public_key, url, signed_url) == False:
+            return False
 
-        value = self.log.get(public_key_str)
-        if not value:
-            return None
-        _, url_to_signed_url = value
+        value = self.log.get(public_key)
+        if value is None:
+            return False
+        _, url_to_signature = value
         
-        if url in url_to_signed_url:
+        if url in url_to_signature:
             print("signed_url already exists for this url")
-            return None
+            return False
     
-        url_to_signed_url[url] = signed_url
+        url_to_signature[url] = signed_url
         self.save_log()
+        return True
     
     # Take a signed url contained in an SQR code and return its signed_url and the
     # identity of the signer.
     # If the URL wasn't previously signed by this public key, returns None.
-    def get_signed_url(self, public_key_str: str, url: str) -> Tuple[str, bytes] | None:
-        value = self.log.get(public_key_str)
+    def get_signature(self, public_key: str, url: str) -> Tuple[str, bytes] | None:
+        
+        value = self.log.get(public_key)
         if value is None:
             return None
+        identity, url_to_signature = value
 
-        identity, url_to_signed_url = value
-
-        signed_url = url_to_signed_url.get(url)
-        if signed_url is None:
+        signature = url_to_signature.get(url)
+        if signature is None:
             return None
         
-        return identity, signed_url
+        return identity, signature
