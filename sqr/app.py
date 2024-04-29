@@ -5,6 +5,7 @@ import io
 from ecdsa import SigningKey, VerifyingKey
 from certificate_authority import CertificateAuthority
 from sqr.sqr_code import SQRCode
+from PIL import Image
 
 app = Flask(__name__)
 
@@ -101,10 +102,14 @@ def create_sqr_code():
 def scan_qr():
 
     image_file = request.files.get("image")
-    if image_file is None:
+    if image_file is None or image_file.filename == '':
         return jsonify({"error": "No image provided"}), 400
+
+
+    image_stream = io.BytesIO(image_file.read())
+    image = Image.open(image_stream)
     
-    image_data = SQRCode.decode_sqr_code(image_file)
+    image_data = SQRCode.decode_sqr_code(image)
     if image_data is None:
         return jsonify({"error": "No SQR code detected"}), 400
     url, public_key = image_data
@@ -121,5 +126,5 @@ def scan_qr():
     
 if __name__ == "__main__":
     host, port = "0.0.0.0", 5000
-    app.run(host="0.0.0.0", port=5000, debug=True)
-    print(f"Server now running at {}")
+    app.run(host= host, port= port, debug=True)
+    print(f"Server now running at {host}:{port}")

@@ -24,11 +24,9 @@ class SQRCode(QrCode):
         return QrCode.encode_text(payload, QrCode.Ecc.MEDIUM)
     
     @staticmethod
-    def decode_sqr_code(image_path: str) -> tuple[str, str] | None:
+    def decode_sqr_code(image: Image) -> tuple[str, str] | None:
         # open the image and use pyzbar to decode
-        img = Image.open(image_path)
-        decoded_objects = decode(img)
-        
+        decoded_objects = decode(image)
         # go through all possible decoded objects
         if decoded_objects:
             for obj in decoded_objects:
