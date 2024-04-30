@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">
+  Welcome, {{ name }}!
+</h1>
+
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Create SQR</h3>
+    <div class="box">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="notification is-danger">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+        {% endwith %}
+        <form id="image-form">
+            <div class="field">
+                <div class="control">
+                    <label class="label">URL</label>
+                    <input id="url-input" class="input is-large" type="text" name="url" placeholder="https://google.com" autofocus="" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="label">Signature</label>
+                    <input id="signature-input" class="input is-large" type="text" name="signature"  required>
+                    <a class="default-link" href="https://replit.com/@EmekaEzike1/Signing" target="_blank" rel="noopener noreferrer" style="color:blue">How do I sign?</a>
+                </div>
+            </div>
+
+            <button class="button is-block is-success is-large is-fullwidth" type="submit">Create</button>
+        </form>
+
+        <!-- data:image/png;base64,{{ image_data }} -->
+        <img id="image-container" src="" alt="">
+
+    </div>
+</div>
+
+<script>
+    // Get the form and image container elements
+    const form = document.getElementById('image-form');
+    const imageContainer = document.getElementById('image-container');
+
+    // Add an event listener to the form submission
+    form.addEventListener('submit', async (event) => {
+        // Prevent the default form submission behavior
+        event.preventDefault();
+
+        // Get the URL and signature inputs from the form
+        const url = document.getElementById('url-input').value;
+        const signature = document.getElementById('signature-input').value;
+
+        // Send a POST request to the '/create' route in Flask
+        try {
+            const response = await fetch('/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: url,
+                    signature: signature
+                })
+            });
+
+            // Check if the response is ok
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            // Parse the response as JSON
+            const data = await response.json();
+
+            // Set the image source to the received image data
+            imageContainer.src = "data:image/png;base64," + data.image_data;
+        } catch (error) {
+            // Log any errors that occur during the fetch
+            console.error('Error fetching image:', error);
+        }
+    });
+</script>
+
+{% endblock %}
