@@ -36,15 +36,13 @@ class CertificateAuthority():
     
     def verify_signature(self, public_key: str, message: str, signature: str) -> bool:
 
-        vk = VerifyingKey.from_string(b64decode(public_key))
-
-        byte_message = message.encode('utf-8')
-        byte_signature = b64decode(signature.encode('utf-8'))
-
         try:
+            vk = VerifyingKey.from_string(b64decode(public_key))
+            byte_message = message.encode('utf-8')
+            byte_signature = b64decode(signature.encode('utf-8'))
             vk.verify(byte_signature, byte_message)
             return True
-        except BadSignatureError:
+        except:
             print(f"Could not verify signature for {message}")
         
         return False

@@ -14,11 +14,10 @@ main = Blueprint("main", __name__)
 def index():
     return render_template('index.html')
 
-
 @main.route('/create')
 @login_required
 def create():
-    return render_template('create.html', name=current_user.name)
+    return render_template('create.html', name=current_user.name, url="", signature="", image_data="")
 
 @main.route("/create", methods=["POST"])
 @login_required
@@ -26,19 +25,21 @@ def create_post():
 
     public_key = current_user.public_key
 
-    data = request.get_json()
+    data = request.form #request.get_json()
 
     raw_url = data.get("url")
     if raw_url is None:
         error_msg = "No url given"
         flash(error_msg)
-        return jsonify({"error": error_msg}), 400
+        return render_template('create.html', name=current_user.name, url="", signature="", image_data="")
+        # return jsonify({"error": error_msg}), 400
     
     signature = data.get("signature")
     if signature is None:
         error_msg = "No signature given"
         flash(error_msg)
-        return jsonify({"error": error_msg}), 400
+        return render_template('create.html', name=current_user.name, url=raw_url, signature="", image_data="")
+        # return jsonify({"error": error_msg}), 400
     
     # TODO: Shorten the URL (TO-DO: Implement URL shortening logic)
     shortened_url = raw_url
@@ -47,7 +48,8 @@ def create_post():
     if not certificate_authority.register_url(public_key, shortened_url, signature):
         error_msg = "Failed to register url with Certificate Authority"
         flash(error_msg)
-        return jsonify({"error": error_msg}), 400
+        return render_template('create.html', name=current_user.name, url=raw_url, signature=signature, image_data="")
+        # return jsonify({"error": error_msg}), 400
     
     # Generate and save the SQR code image
     sqr_code = SQRCode.generate_sqr_code(public_key, shortened_url)
@@ -59,7 +61,8 @@ def create_post():
     img_bytes = image_buffer.getvalue()
     img_base64 = base64.b64encode(img_bytes).decode('utf-8')
     
-    return jsonify({"image_data": img_base64})
+    return render_template('create.html', name=current_user.name, url=raw_url, signature=signature, image_data=f"data:image/png;base64,{img_base64}")
+    # return jsonify({"image_data": img_base64})
 
 # Route for displaying the scan page
 @main.route('/scan')
