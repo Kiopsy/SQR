@@ -2,9 +2,9 @@ from ecdsa import SigningKey, VerifyingKey
 from certificate_authority import CertificateAuthority
 from sqr_code import SQRCode
 from base64 import b64encode, b64decode
+from PIL import Image
 
-def simple():
-     
+def simple():  
     private_key: SigningKey = SigningKey.generate()
     private_key_str: str = b64encode(private_key.to_string()).decode('utf-8')
 
@@ -71,10 +71,20 @@ def main():
     SQRCode.print_sqr(sqr_code)
     SQRCode.save_sqr_as_image(sqr_code, 'sqr_test.png')
 
+    image = Image.open("sqr_test.png")
+    data = SQRCode.decode_sqr_code(image)
+    if data is None:
+        print("Cannot get data from image")
+        return
+    
+    url, public_key_str = data
+    print(f"URL: {url}; public_key: {public_key_str}")
+
+
    
     
 
 
 # Run the main program
 if __name__ == "__main__":
-	simple()
+	main()

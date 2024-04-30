@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, flash
+from flask import Blueprint, render_template, request, jsonify, flash, redirect
 from flask_login import login_required, current_user
 from . import db, certificate_authority
 from .sqr.sqr_code import SQRCode
@@ -55,6 +55,7 @@ def create_post():
     sqr_code = SQRCode.generate_sqr_code(public_key, shortened_url)
     image_buffer = io.BytesIO()
     SQRCode.save_sqr_as_image(sqr_code, image_buffer)
+    Image.open(image_buffer).save("x.png")
     image_buffer.seek(0)
     
     # Convert the image to base64 format
@@ -72,32 +73,46 @@ def scan():
 # Route for processing the scanned SQR code
 @main.route('/scan', methods=['POST'])
 def scan_post():
+
     data = request.get_json()
+    
     image_data = data.get('image_data')
     if image_data is None:
-        return jsonify({"error": "No image provided"}), 400
+        print(1)
+        return jsonify({"success": False, "message": "No image provided"}), 400
     
-    # Decode the base64-encoded image data
-    image_data = image_data.split(',')[1]
-    image_bytes = io.BytesIO(base64.b64decode(image_data))
-    
-    # Create a PIL Image object from the decoded bytes
-    pil_image = Image.open(image_bytes)
-    
-    # Decode the SQR code from the image
-    image_data = SQRCode.decode_sqr_code(pil_image)
-    if image_data is None:
-        return jsonify({"error": "No SQR code detected"}), 400
-    url, public_key = image_data
-    
-    # Retrieve signature information from the Certificate Authority
-    signature_info = certificate_authority.get_signature(public_key, url)
-    if signature_info is None:
-        return jsonify({"error": "No signature found"}), 400
-    _, signed_url = signature_info
-    
-    # Verify the signature
-    if not certificate_authority.verify_signature(public_key, url, signed_url):
-        return jsonify({"error": "Cannot verify signature"}), 400
-    
-    return jsonify({"data": url}), 200
+    try:
+        # Decode the base64-encoded image data
+        image_data = image_data.split(',')[1]
+        image_bytes = io.BytesIO(base64.b64decode(image_data))
+        
+        # Create a PIL Image object from the decoded bytes
+        pil_image = Image.open(image_bytes)
+        
+        # Decode the SQR code from the image
+        image_data = SQRCode.decode_sqr_code(pil_image)
+        if image_data is None:
+            print(2)
+            return jsonify({"success": False, "message": "No SQR code detected"})
+        
+        message, public_key = image_data
+        
+        # Retrieve signature information from the Certificate Authority
+        signature_info = certificate_authority.get_signature(public_key, message)
+        if signature_info is None:
+            print(3)
+            return jsonify({"success": False, "message": "No signature found"})
+        identity, signed_message = signature_info
+        
+        # Verify the signature
+        if certificate_authority.verify_signature(public_key, message, signed_message) == False:
+            print(4)
+            return jsonify({"success": False, "message": "Cannot verify signature"})
+        
+        print(5)
+        return jsonify({"success": True, "message": message, "identity": identity}), 200
+    except Exception as e:
+        print(6, e)
+        return jsonify({"success": False, "message": str(e)}), 400
+
+

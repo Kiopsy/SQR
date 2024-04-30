@@ -1,6 +1,6 @@
 from typing import Sequence, Any
 from .qrcodegen import QrCode
-# from pyzbar.pyzbar import decode
+from pyzbar.pyzbar import decode
 from PIL import Image
 
 class SQRCode(QrCode):

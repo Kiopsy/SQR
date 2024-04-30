@@ -6,10 +6,45 @@
 <video id="camera-stream" width="640" height="480" autoplay></video>
 </div>
 
+<div id="alert" class="modal">
+<div class="modal-background"></div>
+<div class="modal-content">
+    <h5>Website: </h5>
+    <h6 id="website"></h6>
+
+    <h5>Identity: </h5>
+    <h6 id="identity"></h6>
+</div>
+<button class="modal-close is-large" aria-label="close"></button>
+</div>
+
 <script>
     // Access the camera and stream it to the video element
     // claude3: make a website that accesses the camera and continually sends image data to flask
     // https://stackoverflow.com/a/59998983
+
+    let modalOpen = false;
+
+    // Get the modal
+    var modal = document.getElementById('alert');
+    var closeBtn = document.getElementsByClassName("modal-close")[0];
+
+    // When the user clicks on <closeBtn> (x), close the modal
+    closeBtn.onclick = function() {
+        modal.style.display = "none";
+        modalOpen = false;
+        console.log('Modal closed');
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+            modalOpen = false;
+            console.log('Modal closed');
+        }
+    }
+
     navigator.mediaDevices.getUserMedia({ video: true })
         .then(function(stream) {
             const video = document.getElementById('camera-stream');
@@ -19,22 +54,35 @@
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
             setInterval(function() {
-                canvas.width = video.width;
-                canvas.height = video.height;
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const imageData = canvas.toDataURL('image/jpeg');
-
-                // Send image data to Flask server
-                fetch('/receive-image', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ image_data: imageData })
-                })
-                .then(response => console.log('Image sent to server'))
-                .catch(error => console.error('Error sending image:', error));
+                if (modalOpen == false) {
+                    canvas.width = video.width;
+                    canvas.height = video.height;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imageData = canvas.toDataURL('image/jpeg');
+    
+                    // Send image data to Flask server
+                    fetch('/scan', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ image_data: imageData })
+                    })
+                    .then(response => {
+                        return response.json();  
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            modalOpen = true;
+                            document.getElementById('alert').classList.add("is-active");
+                            document.getElementById('website').innerHTML = data.message;
+                            document.getElementById('identity').innerHTML = data.identity;
+                        }
+                    })
+                    .catch(error => console.error('Error sending image:', error));
+                }
             }, 33); // Capture frames at roughly 30 FPS (1000ms / 30 = 33ms)
+
         })
         .catch(function(error) {
             console.error('Error accessing camera:', error);
