@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Events & Endless Horse</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <style>
+        body, h1, h2, h3, h4, h5 {font-family: "Raleway", sans-serif;}
+        .w3-content {
+            max-width: 1400px;
+            margin: auto;
+        }
+        .header {
+            text-align: center;
+            padding: 32px;
+        }
+        .blurb {
+            margin: 15px;
+            text-align: center;
+            font-style: italic;
+        }
+        /* Styles for the horse animation */
+        pre { margin: 0; }
+        .centered { width: 380px; margin: 20px auto; }
+        h1 { text-align: center; }
+    </style>
+</head>
+<body class="w3-light-grey">
+    <div class="w3-content">
+        <!-- Header -->
+        <header class="header"> 
+            <h1><b>You've been Quished!</b></h1>
+            <p>You and <span id="visits" class="w3-tag">7</span> other people have been "quished" as of April 9, 2024.</p>
+        </header>
+
+        <!-- Blurb about Quishing -->
+        <div class="blurb">
+            <p>“Quishing”, otherwise known as QR phishing, is a type of cyber attack that tricks users into scanning QR codes that may lead to malicious websites. This site is not malicious. We are students conducting research on QR code security and social engineering. We apologize for the misdirection and for any inconvenience it may have caused.</p>
+        </div>
+
+        <!-- Endless Horse -->
+        <div id="horse" class="centered">
+<pre>
+   ,
+ _,,)\.~,,._
+ (()`  ``)\))),,_
+ |     \ ''((\)))),,_          ____
+ |6`   |   ''((\())) "-.____.-"    `-.-,
+ |    .'\    ''))))'                  \)))
+ |   |   `.     ''                     ((((
+ \, _)     \/                          |))))
+   `'        |                          (((((
+             \                  |       ))))))
+             `|    |           ,\     /((((((
+               |   / `-.______.<  \   |  )))))
+               |   |  /         `. \  \  ((((
+               |  / \ |           `.\  | (((
+               \  | | |             )| |  ))
+               | | | |             || |  '
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || | 
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |  
+               | | | |             || |   
+</pre>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('https://count.cab/get/PbJOeBZPVu')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const visitElement = document.getElementById('visits');
+                    visitElement.textContent = data.count;
+                    if (!localStorage.getItem('visitedBefore')) {
+                        fetch('https://count.cab/hit/PbJOeBZPVu');
+                        localStorage.setItem('visitedBefore', true);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    document.getElementById('visits').textContent = 'N/A';
+                });
+        });
+
+        document.addEventListener( 'scroll', function () {
+          var pre = document.querySelector( 'pre' );
+          pre.innerText = pre.innerText + '	       | | | |             || |  \n'
+        });
+    </script>
+</body>
+</html>

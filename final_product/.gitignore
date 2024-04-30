@@ -1,0 +1,4 @@
+/instance
+*.pickle
+*.png
+/env
