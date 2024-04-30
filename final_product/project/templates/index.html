@@ -7,4 +7,15 @@
 <h2 class="subtitle">
   Easy and safe QR code generator.
 </h2>
+
+<h1>Generate and Display Image</h1>
+    <form method="post" action="/">
+        <!-- Include any form fields if necessary -->
+        <!-- For example, <input type="text" name="data"> -->
+        <button type="submit">Generate Image</button>
+    </form>
+    {% if image_data %}
+        <!-- Display the image using base64 encoding -->
+        <img src="data:image/png;base64,{{ image_data }}" alt="Generated Image">
+    {% endif %}
 {% endblock %}

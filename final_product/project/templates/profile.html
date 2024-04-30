@@ -15,7 +15,7 @@
             </div>
         {% endif %}
         {% endwith %}
-        <form id="image-form">
+        <form id="image-form" method="post" action="/create_sqr_code">
             <div class="field">
                 <div class="control">
                     <label class="label">URL</label>
@@ -31,54 +31,58 @@
                 </div>
             </div>
 
-            <button class="button is-block is-success is-large is-fullwidth">Create</button>
+            <button class="button is-block is-success is-large is-fullwidth" type="submit">Create</button>
         </form>
 
-        <div id="image-container" class="is-centered">
+        <!-- <div id="image-container" class="is-centered">
             <div id="default-image"></div>
-        </div>
+        </div> -->
+        {% if image_data %}
+            <!-- Display the image using base64 encoding -->
+            <img src="data:image/png;base64,{{ image_data }}" alt="Generated Image">
+        {% endif %}
     </div>
 
 </div>
 
-
+<!-- 
 <script>
 const form = document.getElementById('image-form');
 const imageContainer = document.getElementById('image-container');
 
 form.addEventListener('submit', async (event) => {
-    event.preventDefault();
+    // event.preventDefault();
 
     const url = document.getElementById('url-input').value;
     const signature = document.getElementById('signature-input').value;
 
-    try {
-        const response = await fetch('/create_sqr_code', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ url, signature })
-        });
+    imageContainer.innerHTML = '<div id="default-image"></div>';
 
-        const data = await response;
-
-        if (response.ok) {
-            var blob = this.response;
-            var img = document.createElement('img');
-            img.onload = function(e) {
-                window.URL.revokeObjectURL(img.src);
-            };
-            img.src = window.URL.createObjectURL(blob);
-            imageContainer.innerHTML = '';
-            imageContainer.appendChild(img);
-        } else {
-            imageContainer.innerHTML = `<p class="has-text-danger">${data.error}</p>`;
+    fetch('/create_sqr_code', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            url: url,
+            signature: signautre
+        }) // Adjust body if necessary
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
-    } catch (error) {
-        console.error('Error:', error);
-    }
+        return response.blob();
+    })
+    .then(data => {
+        var img = document.createElement('img');
+        img.src = data.image; // Adjust property name if necessary
+        document.getElementById('image-container').appendChild(img);
+    })
+    .catch(error => {
+        console.error('Error fetching image:', error);
+    });
 });
-</script>
+</script> -->
 
 {% endblock %}
