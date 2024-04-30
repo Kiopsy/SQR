@@ -61,13 +61,17 @@ form.addEventListener('submit', async (event) => {
             body: JSON.stringify({ url, signature })
         });
 
-        const data = await response.json();
+        const data = await response;
 
         if (response.ok) {
-            const imageElement = document.createElement('img');
-            imageElement.src = `data:image/png;base64,${data.image}`;
+            var blob = this.response;
+            var img = document.createElement('img');
+            img.onload = function(e) {
+                window.URL.revokeObjectURL(img.src);
+            };
+            img.src = window.URL.createObjectURL(blob);
             imageContainer.innerHTML = '';
-            imageContainer.appendChild(imageElement);
+            imageContainer.appendChild(img);
         } else {
             imageContainer.innerHTML = `<p class="has-text-danger">${data.error}</p>`;
         }

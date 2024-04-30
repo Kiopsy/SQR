@@ -71,4 +71,4 @@ class SQRCode(QrCode):
                         # Set the pixel values adjusting for the border offset
                         image.putpixel((start_x + x * scale + dx, start_y + y * scale + dy), color)
 
-        image.save(buffer, format="PNG")
+        image.save(buffer, format="png")

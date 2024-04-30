@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response, jsonify, send_file
 from flask_login import login_required, current_user
 from . import db, certificate_authority
 
@@ -22,16 +22,17 @@ def profile():
 @main.route("/create_sqr_code", methods=["POST"])
 @login_required
 def profile_post():
+    import base64
 
-    data = request.get_json()
+    # data = request.get_json()
 
     public_key = current_user.public_key
     
-    raw_url = data.get("url")
+    raw_url = request.form.get("url")
     if raw_url is None:
         return jsonify({"error": ""})
     
-    signature = data.get("signature")
+    signature = request.form.get("signature")
     if signature is None:
         return jsonify({"error": ""})
     
@@ -47,14 +48,16 @@ def profile_post():
     image_buffer = io.BytesIO()
     SQRCode.save_sqr_as_image(sqr_code, image_buffer)
     image_buffer.seek(0)
-    
-    return render_template('scan.html', image_data=image_buffer.getvalue())
+    # image = Image.open(image_buffer)
+    # image.save("x.png")
+
+    return send_file(image_buffer, mimetype='image/png')
+
 
 @main.route('/scan')
 def scan():
     return render_template('scan.html')
 
-i = 0
 @main.route('/scan', methods=['POST'])
 def scan_post():
 
@@ -71,8 +74,6 @@ def scan_post():
     # Create a PIL Image object from the decoded bytes
     pil_image = Image.open(image_bytes)
 
-    pil_image.save(f"captured_image_{i}.jpg", 'JPEG')
-    i += 1
 
     image_data = SQRCode.decode_sqr_code(pil_image)
     if image_data is None:
