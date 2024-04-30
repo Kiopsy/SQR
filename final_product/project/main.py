@@ -11,32 +11,9 @@ from base64 import b64decode
 
 main = Blueprint("main", __name__)
 
-# @main.route('/')
-# def index():
-#     return render_template('index.html')
-
-# Route to render HTML form
-@main.route('/', methods=['GET', 'POST'])
+@main.route('/')
 def index():
-    if request.method == 'POST':
-        # Process the POST request and generate the image
-        # For example, generate_image_from_data(request.form['data'])
-
-        # Sample code to generate a simple image using PIL
-        img = Image.new('RGB', (200, 200), color='blue')
-        # Convert the image to bytes
-        img_bytes = io.BytesIO()
-        img.save(img_bytes, format='PNG')
-        img_bytes = img_bytes.getvalue()
-
-        # Encode the image bytes to base64
-        img_base64 = base64.b64encode(img_bytes).decode('utf-8')
-
-        return render_template('index.html', image_data=img_base64)
-
-    # Render the HTML form for GET request
     return render_template('index.html')
-
 
 @main.route('/profile')
 @login_required
@@ -47,27 +24,22 @@ def profile():
 @login_required
 def profile_post():
 
-    # data = request.get_json()
-
     public_key = current_user.public_key
     
     raw_url = request.form.get("url")
     if raw_url is None:
-        print(1)
-        return jsonify({"error": ""}), 400
+        return jsonify({"error": "No url given"}), 400
     
     signature = request.form.get("signature")
     if signature is None:
-        print(2)
-        return jsonify({"error": ""}), 400
+        return jsonify({"error": "No signature given"}), 400
     
     # TODO: shorten the url
     shortened_url = raw_url
     
     # add new (url, signature) pair to Certificate Authority
     if certificate_authority.register_url(public_key, shortened_url, signature) == False:
-        print(3)
-        return jsonify({"error": ""}), 400
+        return jsonify({"error": "Failed to register url with Certificate Authority"}), 400
 
     sqr_code = SQRCode.generate_sqr_code(public_key, shortened_url)
 
@@ -75,13 +47,9 @@ def profile_post():
     SQRCode.save_sqr_as_image(sqr_code, image_buffer)
     image_buffer.seek(0)
 
-    image = Image.open(image_buffer)
-    image.save("x.png")
-
     img_bytes = image_buffer.getvalue()
     img_base64 = base64.b64encode(img_bytes).decode('utf-8')
     
-    print(4)
     return render_template('profile.html', image_data=img_base64)
 
 
@@ -104,7 +72,6 @@ def scan_post():
 
     # Create a PIL Image object from the decoded bytes
     pil_image = Image.open(image_bytes)
-
 
     image_data = SQRCode.decode_sqr_code(pil_image)
     if image_data is None:
