@@ -56,6 +56,7 @@ Before installing the SQR Web Application, ensure that you have the following pr
 
 5. **Start the Application**:
    ```bash
+   cd final_product
    python3 run.py
    ```
 
