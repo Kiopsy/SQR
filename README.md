@@ -50,7 +50,7 @@ Before installing the SQR Web Application, ensure that you have the following pr
 3. **Install Dependencies**:
    ```bash
    brew install zbar
-   pip install requirements.txt
+   pip install -r requirements.txt
    ```
 
 
